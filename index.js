@@ -1,21 +1,22 @@
-const express = require("express")
+const express = require('express')
+const path = require("path")
 const app = express();
 const PORT = 3000;
-app.listen(PORT, () => { console.log(`server listening on ${PORT}`); });
 
-app.get("/", (req, res) => {
-  res.send("Root Path")
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
 
+app.get("/ig/:username", (req, res) => {
+  const { username } = req.params
+  const instData = require("./data.json");
+  const data = instData[username];
+  if (data) {
+    res.render("home", { data: data })
+  } else {
+    res.render("error")
+  }
 })
-app.get("/:username/:id", (req, res) => {
-  let { username, id } = req.params;
-  console.log(username, id);
-  let htmlCode = `<h1>this is ${username} and this is ${id}</h1>`;
-  res.send(`${htmlCode}`)
 
-})
-app.get("/:search", (req, res) => {
-  console.log(req.query)
-  res.send(`success `)
-
-})
+app.listen(PORT, () => {
+  console.log(`server listening on port ${PORT}`);
+});
